@@ -7,10 +7,10 @@ class Resquare:
         out_file: location of output file
         target_width: target dimensions of output file
         """
-        image = Image.open(in_file)
-        background_color = self.determine_background_color(image)
-        square_image = self.resquare(image,background_color).resize((target_width, target_width), Image.LANCZOS)
-        square_image.save(out_file)
+        self.image = Image.open(in_file)
+        background_color = self.determine_background_color(self.image)
+        square_image = self.resquare(self.image,background_color).resize((target_width, target_width), Image.LANCZOS)
+        square_image.save(out_file, quality=100)
 
     def determine_background_color(self,image):
         """
@@ -18,7 +18,12 @@ class Resquare:
         """
         width = image.width
         height = image.height
-        r, g, b = image.getpixel((0, 0))
+        if image.mode == 'RGB':
+            r, g, b = image.getpixel((0, 0))
+        else:
+            self.image = self.image.convert('RGB')
+            image = self.image
+            r, g, b = image.getpixel((0, 0))
         return (r,g,b)
 
     def resquare(self,image,background_color):
